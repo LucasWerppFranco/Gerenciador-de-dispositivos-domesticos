@@ -15,6 +15,83 @@ typedef struct {
     int prioridade;
 } Dispositivo;
 
+// Functions
+int visual_width(const char *s);
+void print_border_top();
+void print_border_bottom();
+void print_line(const char *text);
+void limparBufferEntrada();
+int capturaTecla();
+void esperarPressionarQ();
+
+void exibirDispositivos(Dispositivo* dispositivos, int quantidade);
+void cadastrarDispositivos(Dispositivo** dispositivos, int* quantidade);
+void salvarDispositivos(Dispositivo* dispositivos, int quantidade);
+int carregarDispositivos(Dispositivo** dispositivos);
+
+// Main Function
+
+int main() {
+    Dispositivo* dispositivos = NULL;
+    int quantidade = 0;
+    quantidade = carregarDispositivos(&dispositivos);
+
+    const char* opcoes[] = {"Cadastrar dispositivo", "Listar dispositivos", "Sair"};
+    int total_opcoes = 3;
+    int selected = 0;
+    int running = 1;
+
+    while (running) {
+        system("clear");
+        print_border_top();
+        print_line("            <=== MENU PRINCIPAL ===>");
+        print_line("");
+        for (int i = 0; i < total_opcoes; i++) {
+            char buffer[100];
+            if (i == selected)
+                snprintf(buffer, sizeof(buffer), " < %s >", opcoes[i]);
+            else
+                snprintf(buffer, sizeof(buffer), "    %s   ", opcoes[i]);
+            print_line(buffer);
+        }
+        print_line("");
+        print_line("Use as setas para navegar entre a pagina.");
+        print_border_bottom();
+
+        int tecla = capturaTecla();
+
+        if (tecla == 'w') {
+            selected = (selected - 1 + total_opcoes) % total_opcoes;
+        } else if (tecla == 's') {
+            selected = (selected + 1) % total_opcoes;
+        } else if (tecla == '\n') {
+            switch (selected) {
+                case 0:
+                    cadastrarDispositivos(&dispositivos, &quantidade);
+                    break;
+                case 1:
+                    exibirDispositivos(dispositivos, quantidade);
+                    break;
+                case 2:
+                    salvarDispositivos(dispositivos, quantidade);
+                    system("clear");
+                    print_border_top();
+                    print_line("Dispositivos salvos. Saindo...");
+                    print_border_bottom();
+                    running = 0;
+                    break;
+            }
+        }
+    }
+
+    // Libera a memória alocada
+    free(dispositivos);
+
+    return 0;
+}
+
+// Struct Functions
+
 int visual_width(const char *s) {
     int width = 0;
     wchar_t wc;
@@ -54,6 +131,8 @@ void print_line(const char *text) {
     printf("║\n");
 }
 
+// Keybord Structs
+
 void limparBufferEntrada() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
@@ -79,7 +158,7 @@ int capturaTecla() {
 }
 
 void esperarPressionarQ() {
-    char input[10]; 
+    char input[10];
 
     print_border_top();
     print_line("Pressione 'q' para voltar ao menu...");
@@ -92,6 +171,8 @@ void esperarPressionarQ() {
         }
     } while (1);
 }
+
+// System Functions
 
 void exibirDispositivos(Dispositivo* dispositivos, int quantidade) {
     system("clear");
@@ -122,41 +203,57 @@ void exibirDispositivos(Dispositivo* dispositivos, int quantidade) {
     esperarPressionarQ();
 }
 
-void cadastrarDispositivo(Dispositivo* dispositivos, int* quantidade) {
-    Dispositivo novo;
-
+void cadastrarDispositivos(Dispositivo** dispositivos, int* quantidade) {
+    int n;
     system("clear");
     print_border_top();
-    print_line("=== Cadastro de Novo Dispositivo ===");
-    print_line("Digite o nome do dispositivo:");
+    print_line("Quantos dispositivos deseja cadastrar?");
     print_border_bottom();
     printf("> ");
-    fgets(novo.nome, sizeof(novo.nome), stdin);
-    novo.nome[strcspn(novo.nome, "\n")] = 0;
-
-    system("clear");
-    print_border_top();
-    print_line("Digite o consumo (kWh):");
-    print_border_bottom();
-    printf("> ");
-    scanf("%f", &novo.consumo);
+    scanf("%d", &n);
     limparBufferEntrada();
 
+    // Realoca o vetor para armazenar os novos dispositivos
+    *dispositivos = realloc(*dispositivos, (*quantidade + n) * sizeof(Dispositivo));
+
+    for (int i = 0; i < n; i++) {
+        Dispositivo novo;
+
+        system("clear");
+        print_border_top();
+        char buffer[100];
+        snprintf(buffer, sizeof(buffer), "Cadastro do dispositivo %d de %d", i + 1, n);
+        print_line(buffer);
+        print_line("Digite o nome do dispositivo:");
+        print_border_bottom();
+        printf("> ");
+        fgets(novo.nome, sizeof(novo.nome), stdin);
+        novo.nome[strcspn(novo.nome, "\n")] = 0;
+
+        system("clear");
+        print_border_top();
+        print_line("Digite o consumo (kWh):");
+        print_border_bottom();
+        printf("> ");
+        scanf("%f", &novo.consumo);
+        limparBufferEntrada();
+
+        system("clear");
+        print_border_top();
+        print_line("Digite a prioridade:");
+        print_line("(1-Alta, 2-Media, 3-Baixa)");
+        print_border_bottom();
+        printf("> ");
+        scanf("%d", &novo.prioridade);
+        limparBufferEntrada();
+
+        (*dispositivos)[*quantidade] = novo;
+        (*quantidade)++;
+    }
+
     system("clear");
     print_border_top();
-    print_line("Digite a prioridade:");
-    print_line("(1-Alta, 2-Media, 3-Baixa)");
-    print_border_bottom();
-    printf("> ");
-    scanf("%d", &novo.prioridade);
-    limparBufferEntrada();
-
-    dispositivos[*quantidade] = novo;
-    (*quantidade)++;
-
-    system("clear");
-    print_border_top();
-    print_line("Dispositivo cadastrado com sucesso!");
+    print_line("Dispositivos cadastrados com sucesso!");
     print_border_bottom();
     esperarPressionarQ();
 }
@@ -174,75 +271,22 @@ void salvarDispositivos(Dispositivo* dispositivos, int quantidade) {
     fclose(f);
 }
 
-int carregarDispositivos(Dispositivo* dispositivos) {
+int carregarDispositivos(Dispositivo** dispositivos) {
     FILE* f = fopen(ARQUIVO, "r");
     if (!f) {
         return 0;
     }
     int quantidade;
     fscanf(f, "%d\n", &quantidade);
+
+    *dispositivos = malloc(quantidade * sizeof(Dispositivo));
+
     for (int i = 0; i < quantidade; i++) {
-        fgets(dispositivos[i].nome, sizeof(dispositivos[i].nome), f);
-        dispositivos[i].nome[strcspn(dispositivos[i].nome, "\n")] = 0;
-        fscanf(f, "%f %d\n", &dispositivos[i].consumo, &dispositivos[i].prioridade);
+        fgets((*dispositivos)[i].nome, sizeof((*dispositivos)[i].nome), f);
+        (*dispositivos)[i].nome[strcspn((*dispositivos)[i].nome, "\n")] = 0;
+        fscanf(f, "%f %d\n", &(*dispositivos)[i].consumo, &(*dispositivos)[i].prioridade);
     }
     fclose(f);
     return quantidade;
-}
-
-int main() {
-    Dispositivo dispositivos[100];
-    int quantidade = 0;
-    quantidade = carregarDispositivos(dispositivos);
-
-    const char* opcoes[] = {"Cadastrar dispositivo", "Listar dispositivos", "Sair"};
-    int total_opcoes = 3;
-    int selected = 0;
-    int running = 1;
-
-    while (running) {
-        system("clear");
-        print_border_top();
-        print_line("            <=== MENU PRINCIPAL ===>");
-        print_line("");
-        for (int i = 0; i < total_opcoes; i++) {
-            char buffer[100];
-            if (i == selected)
-                snprintf(buffer, sizeof(buffer), " < %s >", opcoes[i]);
-            else
-                snprintf(buffer, sizeof(buffer), "    %s   ", opcoes[i]);
-            print_line(buffer);
-        }
-        print_line("");
-        print_line("Use as setas para navegar entre a pagina.");
-        print_border_bottom();
-
-        int tecla = capturaTecla();
-
-        if (tecla == 'w') {
-            selected = (selected - 1 + total_opcoes) % total_opcoes;
-        } else if (tecla == 's') {
-            selected = (selected + 1) % total_opcoes;
-        } else if (tecla == '\n') {
-            switch (selected) {
-                case 0:
-                    cadastrarDispositivo(dispositivos, &quantidade);
-                    break;
-                case 1:
-                    exibirDispositivos(dispositivos, quantidade);
-                    break;
-                case 2:
-                    salvarDispositivos(dispositivos, quantidade);
-                    system("clear");
-                    print_border_top();
-                    print_line("Dispositivos salvos. Saindo...");
-                    print_border_bottom();
-                    running = 0;
-                    break;
-            }
-        }
-    }
-
-    return 0;
 }
 
