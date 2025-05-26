@@ -1,17 +1,5 @@
-8
-Gladeira
+2
+Geladeira
 38.00 1
-Micro Ondas
-10.00 3
-Lampada
-0.30 2
-Ventilador
-0.40 3
-TV
-10.50 3
-Roteador
-2.00 1
-Alexa
-1.00 1
-0.00 0
-0.00 0
+Lampada da Sala
+1.50 2

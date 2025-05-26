@@ -3,6 +3,8 @@
 #include <string.h>
 #include <wchar.h>
 #include <wctype.h>
+#include <termios.h>
+#include <unistd.h>
 
 #define WIDTH 50
 #define ARQUIVO "dispositivos.txt"
@@ -13,7 +15,6 @@ typedef struct {
     int prioridade;
 } Dispositivo;
 
-// Funções de borda
 int visual_width(const char *s) {
     int width = 0;
     wchar_t wc;
@@ -53,21 +54,43 @@ void print_line(const char *text) {
     printf("║\n");
 }
 
-// Função auxiliar para limpar buffer
 void limparBufferEntrada() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-// Funções principais
+int capturaTecla() {
+    struct termios oldt, newt;
+    int ch;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    ch = getchar();
+    if (ch == 27) {
+        getchar();
+        ch = getchar();
+        if (ch == 'A') ch = 'w';
+        else if (ch == 'B') ch = 's';
+        else ch = 0;
+    }
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
+}
+
 void esperarPressionarQ() {
-    char c;
+    char input[10]; 
+
     print_border_top();
     print_line("Pressione 'q' para voltar ao menu...");
     print_border_bottom();
+
     do {
-        c = getchar();
-    } while (c != 'q' && c != 'Q');
+        printf("> ");
+        if (fgets(input, sizeof(input), stdin)) {
+            if (input[0] == 'q' || input[0] == 'Q') break;
+        }
+    } while (1);
 }
 
 void exibirDispositivos(Dispositivo* dispositivos, int quantidade) {
@@ -75,11 +98,11 @@ void exibirDispositivos(Dispositivo* dispositivos, int quantidade) {
     print_border_top();
     if (quantidade == 0) {
         print_line("Nenhum dispositivo cadastrado.");
-        print_border_bottom();
     } else {
-        print_line("=== Lista de Dispositivos Cadastrados ===");
+        print_line("   === Lista de Dispositivos Cadastrados ===");
         print_border_bottom();
         print_border_top();
+        print_line("");
         for (int i = 0; i < quantidade; i++) {
             char buffer[100];
             snprintf(buffer, sizeof(buffer), "Dispositivo %d: %s", i + 1, dispositivos[i].nome);
@@ -170,48 +193,55 @@ int carregarDispositivos(Dispositivo* dispositivos) {
 int main() {
     Dispositivo dispositivos[100];
     int quantidade = 0;
-
     quantidade = carregarDispositivos(dispositivos);
 
-    int opcao;
-    do {
+    const char* opcoes[] = {"Cadastrar dispositivo", "Listar dispositivos", "Sair"};
+    int total_opcoes = 3;
+    int selected = 0;
+    int running = 1;
+
+    while (running) {
         system("clear");
         print_border_top();
         print_line("            <=== MENU PRINCIPAL ===>");
         print_line("");
-        print_line("  1. Cadastrar dispositivo");
-        print_line("  2. Listar dispositivos");
-        print_line("  3. Sair");
+        for (int i = 0; i < total_opcoes; i++) {
+            char buffer[100];
+            if (i == selected)
+                snprintf(buffer, sizeof(buffer), " < %s >", opcoes[i]);
+            else
+                snprintf(buffer, sizeof(buffer), "    %s   ", opcoes[i]);
+            print_line(buffer);
+        }
         print_line("");
-        print_line("  Escolha uma opcao:");
+        print_line("Use as setas para navegar entre a pagina.");
         print_border_bottom();
 
-        printf("> ");
-        scanf("%d", &opcao);
-        limparBufferEntrada();
+        int tecla = capturaTecla();
 
-        switch (opcao) {
-            case 1:
-                cadastrarDispositivo(dispositivos, &quantidade);
-                break;
-            case 2:
-                exibirDispositivos(dispositivos, quantidade);
-                break;
-            case 3:
-                salvarDispositivos(dispositivos, quantidade);
-                system("clear");
-                print_border_top();
-                print_line("Dispositivos salvos. Saindo...");
-                print_border_bottom();
-                break;
-            default:
-                system("clear");
-                print_border_top();
-                print_line("Opcao invalida! Tente novamente.");
-                print_border_bottom();
-                esperarPressionarQ();
+        if (tecla == 'w') {
+            selected = (selected - 1 + total_opcoes) % total_opcoes;
+        } else if (tecla == 's') {
+            selected = (selected + 1) % total_opcoes;
+        } else if (tecla == '\n') {
+            switch (selected) {
+                case 0:
+                    cadastrarDispositivo(dispositivos, &quantidade);
+                    break;
+                case 1:
+                    exibirDispositivos(dispositivos, quantidade);
+                    break;
+                case 2:
+                    salvarDispositivos(dispositivos, quantidade);
+                    system("clear");
+                    print_border_top();
+                    print_line("Dispositivos salvos. Saindo...");
+                    print_border_bottom();
+                    running = 0;
+                    break;
+            }
         }
-    } while (opcao != 3);
+    }
 
     return 0;
 }
