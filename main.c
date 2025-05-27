@@ -1,3 +1,19 @@
+/*
+
+  Integrantes do Grupo: 
+
+  Lucas Alves Antunes Almeida / RM: 566362 
+
+  Lucas Werpp Franco / RM: 556044 
+
+  Lucca Rosseto Rezende / RM: 564180 
+
+  Massayoshi Bando Fogaça e Silva / RM: 561779 
+
+  Miguel Lima da Silva / RM: 565141
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

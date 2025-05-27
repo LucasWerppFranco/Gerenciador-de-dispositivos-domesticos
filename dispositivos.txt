@@ -11,3 +11,4 @@ Lampada Cozinha
 1.00 2
 Chuveiro Eletrico
 1.65 3
+
