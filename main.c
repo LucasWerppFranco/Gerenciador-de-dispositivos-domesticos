@@ -1,5 +1,7 @@
 /*
 
+  NOTA IMPORTANTE - Confira o README para obter os passos da preparação do ambiente para rodar o programa
+
   Integrantes do Grupo: 
 
   Lucas Alves Antunes Almeida / RM: 566362 
