@@ -1,19 +1,13 @@
 /*
-
   NOTA IMPORTANTE - Confira o README para obter os passos da preparação do ambiente para rodar o programa
 
-  Integrantes do Grupo: 
+  Integrantes do Grupo:
 
-  Lucas Alves Antunes Almeida / RM: 566362 
-
-  Lucas Werpp Franco / RM: 556044 
-
-  Lucca Rosseto Rezende / RM: 564180 
-
-  Massayoshi Bando Fogaça e Silva / RM: 561779 
-
+  Lucas Alves Antunes Almeida / RM: 566362
+  Lucas Werpp Franco / RM: 556044
+  Lucca Rosseto Rezende / RM: 564180
+  Massayoshi Bando Fogaça e Silva / RM: 561779
   Miguel Lima da Silva / RM: 565141
-
 */
 
 #include <stdio.h>
@@ -46,6 +40,8 @@ void exibirDispositivos(Dispositivo* dispositivos, int quantidade);
 void cadastrarDispositivos(Dispositivo** dispositivos, int* quantidade);
 void salvarDispositivos(Dispositivo* dispositivos, int quantidade);
 int carregarDispositivos(Dispositivo** dispositivos);
+void simularConsumo(Dispositivo* dispositivos, int quantidade);
+void ordenarPorPrioridade(Dispositivo* dispositivos, int quantidade);
 
 // Main Function
 
@@ -54,8 +50,13 @@ int main() {
     int quantidade = 0;
     quantidade = carregarDispositivos(&dispositivos);
 
-    const char* opcoes[] = {"Cadastrar dispositivo", "Listar dispositivos", "Sair"};
-    int total_opcoes = 3;
+    const char* opcoes[] = {
+        "Cadastrar dispositivo",
+        "Listar dispositivos",
+        "Simular consumo inteligente",
+        "Sair"
+    };
+    int total_opcoes = 4;
     int selected = 0;
     int running = 1;
 
@@ -91,6 +92,9 @@ int main() {
                     exibirDispositivos(dispositivos, quantidade);
                     break;
                 case 2:
+                    simularConsumo(dispositivos, quantidade);
+                    break;
+                case 3:
                     salvarDispositivos(dispositivos, quantidade);
                     system("clear");
                     print_border_top();
@@ -102,7 +106,6 @@ int main() {
         }
     }
 
-    // Libera a memória alocada
     free(dispositivos);
 
     return 0;
@@ -197,27 +200,46 @@ void exibirDispositivos(Dispositivo* dispositivos, int quantidade) {
     print_border_top();
     if (quantidade == 0) {
         print_line("Nenhum dispositivo cadastrado.");
-    } else {
-        print_line("   === Lista de Dispositivos Cadastrados ===");
         print_border_bottom();
-        print_border_top();
-        print_line("");
-        for (int i = 0; i < quantidade; i++) {
-            char buffer[100];
-            snprintf(buffer, sizeof(buffer), "Dispositivo %d: %s", i + 1, dispositivos[i].nome);
-            print_line(buffer);
-            snprintf(buffer, sizeof(buffer), "Consumo: %.2f kWh", dispositivos[i].consumo);
-            print_line(buffer);
-            if (dispositivos[i].prioridade == 1)
-                print_line("Prioridade: Alta - Essencial");
-            else if (dispositivos[i].prioridade == 2)
-                print_line("Prioridade: Media - Importante");
-            else
-                print_line("Prioridade: Baixa - Nao essencial");
-            print_line("");
-        }
+        esperarPressionarQ();
+        return;
     }
+
+    print_line("   === Lista de Dispositivos Cadastrados ===");
     print_border_bottom();
+
+    Dispositivo* copia = malloc(quantidade * sizeof(Dispositivo));
+    if (!copia) {
+        print_border_top();
+        print_line("Erro de alocação de memória.");
+        print_border_bottom();
+        esperarPressionarQ();
+        return;
+    }
+    memcpy(copia, dispositivos, quantidade * sizeof(Dispositivo));
+
+    ordenarPorPrioridade(copia, quantidade);
+
+    print_border_top();
+    print_line("");
+
+    for (int i = 0; i < quantidade; i++) {
+        char buffer[100];
+        snprintf(buffer, sizeof(buffer), "Dispositivo %d: %s", i + 1, copia[i].nome);
+        print_line(buffer);
+        snprintf(buffer, sizeof(buffer), "Consumo: %.2f kWh", copia[i].consumo);
+        print_line(buffer);
+        if (copia[i].prioridade == 1)
+            print_line("Prioridade: Alta - Essencial");
+        else if (copia[i].prioridade == 2)
+            print_line("Prioridade: Media - Importante");
+        else
+            print_line("Prioridade: Baixa - Nao essencial");
+        print_line("");
+    }
+
+    print_border_bottom();
+    free(copia);
     esperarPressionarQ();
 }
 
@@ -231,7 +253,6 @@ void cadastrarDispositivos(Dispositivo** dispositivos, int* quantidade) {
     scanf("%d", &n);
     limparBufferEntrada();
 
-    // Realoca o vetor para armazenar os novos dispositivos
     *dispositivos = realloc(*dispositivos, (*quantidade + n) * sizeof(Dispositivo));
 
     for (int i = 0; i < n; i++) {
@@ -306,5 +327,61 @@ int carregarDispositivos(Dispositivo** dispositivos) {
     }
     fclose(f);
     return quantidade;
+}
+
+// Algoritmo de decisão
+
+void ordenarPorPrioridade(Dispositivo* dispositivos, int quantidade) {
+    for (int i = 0; i < quantidade - 1; i++) {
+        for (int j = 0; j < quantidade - i - 1; j++) {
+            if (dispositivos[j].prioridade > dispositivos[j + 1].prioridade) {
+                Dispositivo temp = dispositivos[j];
+                dispositivos[j] = dispositivos[j + 1];
+                dispositivos[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void simularConsumo(Dispositivo* dispositivos, int quantidade) {
+    float energiaDisponivel;
+    system("clear");
+    print_border_top();
+    print_line("Digite a energia disponível (em kWh):");
+    print_border_bottom();
+    printf("> ");
+    scanf("%f", &energiaDisponivel);
+    limparBufferEntrada();
+
+    ordenarPorPrioridade(dispositivos, quantidade);
+
+    float consumoTotal = 0.0;
+    system("clear");
+    print_border_top();
+    print_line("=== Simulação de Consumo Inteligente ===");
+    print_border_bottom();
+
+    print_border_top();
+    for (int i = 0; i < quantidade; i++) {
+        float novoConsumo = consumoTotal + dispositivos[i].consumo;
+        char buffer[100];
+        
+        if (novoConsumo <= energiaDisponivel) {
+            consumoTotal = novoConsumo;
+            snprintf(buffer, sizeof(buffer), "[LIGADO] %s (%.2f kWh)", dispositivos[i].nome, dispositivos[i].consumo);
+        } else {
+            snprintf(buffer, sizeof(buffer), "[DESLIGADO] %s (%.2f kWh)", dispositivos[i].nome, dispositivos[i].consumo);
+        }
+        print_line(buffer);
+    }
+    print_border_bottom();
+
+    print_border_top();
+    char totalBuffer[100];
+    snprintf(totalBuffer, sizeof(totalBuffer), "Consumo total: %.2f / %.2f kWh", consumoTotal, energiaDisponivel);
+    print_line(totalBuffer);
+    print_border_bottom();
+
+    esperarPressionarQ();
 }
 
