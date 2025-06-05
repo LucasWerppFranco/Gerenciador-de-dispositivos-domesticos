@@ -16,3 +16,15 @@ gcc -std=c99 -D_XOPEN_SOURCE=700 main.c -o main
 docker build -t meu_programa .
 docker run -it --rm meu_programa
 ```
+
+# Colaboradores do Projeto
+
+  Lucas Alves Antunes Almeida / RM: 566362 
+
+  Lucas Werpp Franco / RM: 556044 
+
+  Lucca Rosseto Rezende / RM: 564180 
+
+  Massayoshi Bando Fogaça e Silva / RM: 561779 
+
+  Miguel Lima da Silva / RM: 565141
