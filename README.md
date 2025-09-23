@@ -21,6 +21,7 @@ Algoritmo	Tempo (s)	Comparações
 Bubble Sort	0.000002	15
 
 Insertion Sort	0.000001	9
+
 <img width="453" height="241" alt="20250923_19h07m21s_grim" src="https://github.com/user-attachments/assets/06f7ea29-20d7-4e42-87a5-acd66c11256d" />
 
 Os valores variam conforme o número de dispositivos cadastrados e a máquina de execução.
