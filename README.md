@@ -4,6 +4,19 @@
 
 Eexistem alguns fatores que impedem a sua compilação em uma maquina Windows. Para contornar isso, Eu desenvolvi uma Dockerfile que compila e roda o código no contexto de uma maquina windos para quem for usar este programa.
 
+---
+
+Na **Sprint 3**, o sistema foi evoluído com:
+- Implementação de dois algoritmos de ordenação:
+  - **Bubble Sort**
+  - **Insertion Sort**
+- Comparação entre os algoritmos, registrando:
+  - Tempo de execução (via `clock()`).
+  - Número de comparações realizadas.
+- Exibição de resultados comparativos em tabela.
+
+---
+
 ## Comando Para Compilar o Programa No Linux
 
 ```
