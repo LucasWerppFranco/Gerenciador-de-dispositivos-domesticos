@@ -34,7 +34,8 @@ Insertion Sort
 - Caso médio: Θ(n²).
 - Pior caso (inversamente ordenado): Θ(n²).
 
-## 📌 Conclusão: embora ambos tenham complexidade quadrática no pior caso, o Insertion Sort é mais eficiente em listas pequenas ou parcialmente ordenadas.
+## 📌 Conclusão
+embora ambos tenham complexidade quadrática no pior caso, o Insertion Sort é mais eficiente em listas pequenas ou parcialmente ordenadas.
 
 ---
 
