@@ -15,14 +15,14 @@ Na **Sprint 3**, o sistema foi evoluído com:
   - Número de comparações realizadas.
 - Exibição de resultados comparativos em tabela.
 
-##📊 Resultados Comparativos (exemplo com 6 dispositivos)
+## 📊 Resultados Comparativos (exemplo com 6 dispositivos)
 Algoritmo	Tempo (s)	Comparações
 Bubble Sort	0.000002	15
 Insertion Sort	0.000001	9
 
 Os valores variam conforme o número de dispositivos cadastrados e a máquina de execução.
 
-##📈 Análise de Complexidade
+## 📈 Análise de Complexidade
 Bubble Sort
 
 - Melhor caso (já ordenado): Θ(n²) → ainda percorre todos os pares.
@@ -34,7 +34,7 @@ Insertion Sort
 - Caso médio: Θ(n²).
 - Pior caso (inversamente ordenado): Θ(n²).
 
-##📌 Conclusão: embora ambos tenham complexidade quadrática no pior caso, o Insertion Sort é mais eficiente em listas pequenas ou parcialmente ordenadas.
+## 📌 Conclusão: embora ambos tenham complexidade quadrática no pior caso, o Insertion Sort é mais eficiente em listas pequenas ou parcialmente ordenadas.
 
 ---
 
