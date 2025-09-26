@@ -5,13 +5,9 @@
   Integrantes do Grupo: 
 
   Lucas Alves Antunes Almeida / RM: 566362 
-
   Lucas Werpp Franco / RM: 556044 
-
   Lucca Rosseto Rezende / RM: 564180 
-
   Massayoshi Bando Fogaça e Silva / RM: 561779 
-
   Miguel Lima da Silva / RM: 565141
 
 */
@@ -23,6 +19,7 @@
 #include <wctype.h>
 #include <termios.h>
 #include <unistd.h>
+#include <time.h>  // <- Necessário para medir o tempo
 
 #define WIDTH 50
 #define ARQUIVO "dispositivos.txt"
@@ -33,7 +30,7 @@ typedef struct {
     int prioridade;
 } Dispositivo;
 
-// Functions
+// Declarações
 int visual_width(const char *s);
 void print_border_top();
 void print_border_bottom();
@@ -47,15 +44,19 @@ void cadastrarDispositivos(Dispositivo** dispositivos, int* quantidade);
 void salvarDispositivos(Dispositivo* dispositivos, int quantidade);
 int carregarDispositivos(Dispositivo** dispositivos);
 
-// Main Function
+// Novas funções de ordenação
+void bubbleSort(Dispositivo* arr, int n, long *comparacoes);
+void insertionSort(Dispositivo* arr, int n, long *comparacoes);
+void compararAlgoritmos(Dispositivo* dispositivos, int quantidade);
 
+// Main
 int main() {
     Dispositivo* dispositivos = NULL;
     int quantidade = 0;
     quantidade = carregarDispositivos(&dispositivos);
 
-    const char* opcoes[] = {"Cadastrar dispositivo", "Listar dispositivos", "Sair"};
-    int total_opcoes = 3;
+    const char* opcoes[] = {"Cadastrar dispositivo", "Listar dispositivos", "Comparar algoritmos", "Sair"};
+    int total_opcoes = 4;
     int selected = 0;
     int running = 1;
 
@@ -73,7 +74,7 @@ int main() {
             print_line(buffer);
         }
         print_line("");
-        print_line("Use as setas para navegar entre a pagina.");
+        print_line("Use as setas ou W/S para navegar.");
         print_border_bottom();
 
         int tecla = capturaTecla();
@@ -91,6 +92,9 @@ int main() {
                     exibirDispositivos(dispositivos, quantidade);
                     break;
                 case 2:
+                    compararAlgoritmos(dispositivos, quantidade);
+                    break;
+                case 3:
                     salvarDispositivos(dispositivos, quantidade);
                     system("clear");
                     print_border_top();
@@ -102,14 +106,11 @@ int main() {
         }
     }
 
-    // Libera a memória alocada
     free(dispositivos);
-
     return 0;
 }
 
-// Struct Functions
-
+// Funções auxiliares de layout
 int visual_width(const char *s) {
     int width = 0;
     wchar_t wc;
@@ -124,7 +125,6 @@ int visual_width(const char *s) {
         if (w > 0) width += w;
         p += len;
     }
-
     return width;
 }
 
@@ -149,8 +149,7 @@ void print_line(const char *text) {
     printf("║\n");
 }
 
-// Keybord Structs
-
+// Entrada de teclado
 void limparBufferEntrada() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
@@ -177,11 +176,9 @@ int capturaTecla() {
 
 void esperarPressionarQ() {
     char input[10];
-
     print_border_top();
     print_line("Pressione 'q' para voltar ao menu...");
     print_border_bottom();
-
     do {
         printf("> ");
         if (fgets(input, sizeof(input), stdin)) {
@@ -190,8 +187,7 @@ void esperarPressionarQ() {
     } while (1);
 }
 
-// System Functions
-
+// Funções do sistema
 void exibirDispositivos(Dispositivo* dispositivos, int quantidade) {
     system("clear");
     print_border_top();
@@ -231,12 +227,10 @@ void cadastrarDispositivos(Dispositivo** dispositivos, int* quantidade) {
     scanf("%d", &n);
     limparBufferEntrada();
 
-    // Realoca o vetor para armazenar os novos dispositivos
     *dispositivos = realloc(*dispositivos, (*quantidade + n) * sizeof(Dispositivo));
 
     for (int i = 0; i < n; i++) {
         Dispositivo novo;
-
         system("clear");
         print_border_top();
         char buffer[100];
@@ -306,5 +300,77 @@ int carregarDispositivos(Dispositivo** dispositivos) {
     }
     fclose(f);
     return quantidade;
+}
+
+// Algoritmos de ordenação
+void bubbleSort(Dispositivo* arr, int n, long *comparacoes) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            (*comparacoes)++;
+            if (arr[j].consumo > arr[j + 1].consumo) {
+                Dispositivo temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void insertionSort(Dispositivo* arr, int n, long *comparacoes) {
+    for (int i = 1; i < n; i++) {
+        Dispositivo chave = arr[i];
+        int j = i - 1;
+        while (j >= 0) {
+            (*comparacoes)++;
+            if (arr[j].consumo > chave.consumo) {
+                arr[j + 1] = arr[j];
+                j--;
+            } else break;
+        }
+        arr[j + 1] = chave;
+    }
+}
+
+// Comparação entre algoritmos
+void compararAlgoritmos(Dispositivo* dispositivos, int quantidade) {
+    if (quantidade == 0) {
+        system("clear");
+        print_border_top();
+        print_line("Nenhum dispositivo cadastrado.");
+        print_border_bottom();
+        esperarPressionarQ();
+        return;
+    }
+
+    Dispositivo* copia1 = malloc(quantidade * sizeof(Dispositivo));
+    Dispositivo* copia2 = malloc(quantidade * sizeof(Dispositivo));
+    memcpy(copia1, dispositivos, quantidade * sizeof(Dispositivo));
+    memcpy(copia2, dispositivos, quantidade * sizeof(Dispositivo));
+
+    long compBubble = 0, compInsertion = 0;
+
+    clock_t startB = clock();
+    bubbleSort(copia1, quantidade, &compBubble);
+    clock_t endB = clock();
+    double tempoBubble = (double)(endB - startB) / CLOCKS_PER_SEC;
+
+    clock_t startI = clock();
+    insertionSort(copia2, quantidade, &compInsertion);
+    clock_t endI = clock();
+    double tempoInsertion = (double)(endI - startI) / CLOCKS_PER_SEC;
+
+    system("clear");
+    print_border_top();
+    print_line("  === Comparacao de Algoritmos ===");
+    print_border_bottom();
+    printf("\n%-15s | %-10s | %-12s\n", "Algoritmo", "Tempo (s)", "Comparacoes");
+    printf("---------------------------------------------\n");
+    printf("%-15s | %-10f | %-12ld\n", "Bubble Sort", tempoBubble, compBubble);
+    printf("%-15s | %-10f | %-12ld\n", "Insertion Sort", tempoInsertion, compInsertion);
+
+    free(copia1);
+    free(copia2);
+
+    esperarPressionarQ();
 }
 
