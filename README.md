@@ -6,6 +6,21 @@ Eexistem alguns fatores que impedem a sua compilação em uma maquina Windows. P
 
 ---
 
+## Comando Para Compilar o Programa No Linux
+
+```
+gcc -std=c99 -D_XOPEN_SOURCE=700 main.c -o main
+```
+
+## Instalando Imagem e Rodando o Programa No Docker
+
+```
+docker build -t meu_programa .
+docker run -it --rm meu_programa
+```
+
+---
+
 Na **Sprint 3**, o sistema foi evoluído com:
 - Implementação de dois algoritmos de ordenação:
   - **Bubble Sort**
@@ -38,23 +53,7 @@ Insertion Sort
 - Caso médio: Θ(n²).
 - Pior caso (inversamente ordenado): Θ(n²).
 
-## 📌 Conclusão
-embora ambos tenham complexidade quadrática no pior caso, o Insertion Sort é mais eficiente em listas pequenas ou parcialmente ordenadas.
-
 ---
-
-## Comando Para Compilar o Programa No Linux
-
-```
-gcc -std=c99 -D_XOPEN_SOURCE=700 main.c -o main
-```
-
-## Instalando Imagem e Rodando o Programa No Docker
-
-```
-docker build -t meu_programa .
-docker run -it --rm meu_programa
-```
 
 # Colaboradores do Projeto
 
