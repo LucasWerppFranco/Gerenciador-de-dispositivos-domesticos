@@ -4,8 +4,6 @@
 
 Eexistem alguns fatores que impedem a sua compilação em uma maquina Windows. Para contornar isso, Eu desenvolvi uma Dockerfile que compila e roda o código no contexto de uma maquina windos para quem for usar este programa.
 
----
-
 ## Comando Para Compilar o Programa No Linux
 
 ```
