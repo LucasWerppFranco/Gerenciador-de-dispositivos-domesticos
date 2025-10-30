@@ -57,11 +57,11 @@ docker run -it --rm meu_programa
 
 
 ---
-# Sprint 1 -
+# Sprint 1 - Cadastro dinâmico
 
-# Sprint 2 -
+# Sprint 2 - Simulação de decisão
 
-# Sprint 3 - dois algoritmos de ordenação
+# Sprint 3 - Comparação de algoritmos
 
 ## 📊 Resultados Comparativos (exemplo com 6 dispositivos)
 Algoritmo	Tempo (s)	Comparações:
