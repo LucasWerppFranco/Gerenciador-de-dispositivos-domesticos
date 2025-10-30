@@ -213,9 +213,10 @@ void exibirDispositivos(Dispositivo* dispositivos, int quantidade) {
         return;
     }
 
+    // Corrigido: agora a prioridade 1 (Alta) aparece primeiro
     for (int i = 0; i < quantidade - 1; i++) {
         for (int j = i + 1; j < quantidade; j++) {
-            if (dispositivos[i].prioridade < dispositivos[j].prioridade ||
+            if (dispositivos[i].prioridade > dispositivos[j].prioridade ||
                 (dispositivos[i].prioridade == dispositivos[j].prioridade &&
                  dispositivos[i].consumo < dispositivos[j].consumo)) {
 
@@ -236,9 +237,9 @@ void exibirDispositivos(Dispositivo* dispositivos, int quantidade) {
     for (int i = 0; i < quantidade; i++) {
         char prioridadeTexto[10];
         switch (dispositivos[i].prioridade) {
-            case 3: strcpy(prioridadeTexto, "Alta"); break;
+            case 1: strcpy(prioridadeTexto, "Alta"); break;
             case 2: strcpy(prioridadeTexto, "Media"); break;
-            case 1: strcpy(prioridadeTexto, "Baixa"); break;
+            case 3: strcpy(prioridadeTexto, "Baixa"); break;
             default: strcpy(prioridadeTexto, "N/D"); break;
         }
 
@@ -270,6 +271,20 @@ void alterarStatusDispositivo(Dispositivo* dispositivos, int quantidade) {
         return;
     }
 
+    // Corrigido: agora a prioridade 1 (Alta) aparece primeiro
+    for (int i = 0; i < quantidade - 1; i++) {
+        for (int j = i + 1; j < quantidade; j++) {
+            if (dispositivos[i].prioridade > dispositivos[j].prioridade ||
+                (dispositivos[i].prioridade == dispositivos[j].prioridade &&
+                 dispositivos[i].consumo < dispositivos[j].consumo)) {
+
+                Dispositivo temp = dispositivos[i];
+                dispositivos[i] = dispositivos[j];
+                dispositivos[j] = temp;
+            }
+        }
+    }
+
     int selected = 0;
     int running = 1;
 
@@ -283,9 +298,9 @@ void alterarStatusDispositivo(Dispositivo* dispositivos, int quantidade) {
         for (int i = 0; i < quantidade; i++) {
             char prioridadeTexto[10];
             switch (dispositivos[i].prioridade) {
-                case 3: strcpy(prioridadeTexto, "Alta"); break;
+                case 1: strcpy(prioridadeTexto, "Alta"); break;
                 case 2: strcpy(prioridadeTexto, "Media"); break;
-                case 1: strcpy(prioridadeTexto, "Baixa"); break;
+                case 3: strcpy(prioridadeTexto, "Baixa"); break;
                 default: strcpy(prioridadeTexto, "N/D"); break;
             }
 
@@ -301,11 +316,10 @@ void alterarStatusDispositivo(Dispositivo* dispositivos, int quantidade) {
                      prioridadeTexto,
                      statusTexto);
 
-            if (i == selected) {
+            if (i == selected)
                 printf("> %s <\n", buffer);
-            } else {
-                printf("   %s\n", buffer);
-            }
+            else
+                printf("  %s\n", buffer);
         }
 
         print_border_top();
@@ -435,7 +449,7 @@ void simularCasaInteligente(Dispositivo* dispositivos, int quantidade) {
     system("clear");
     print_border_top();
     print_line("Simulacao de Casa Inteligente");
-    print_line("Informe a quantidade de energia disponivel (kWh):");
+    print_line("Informe a energia disponivel (kWh):");
     print_border_bottom();
     printf("> ");
     scanf("%f", &reserva);
@@ -462,6 +476,7 @@ void simularCasaInteligente(Dispositivo* dispositivos, int quantidade) {
 
         float consumo_hora = 0.0f;
 
+        // Calcula consumo dos ligados e exibe tabela
         for (int i = 0; i < quantidade; i++) {
             if (dispositivos[i].status == 1) {
                 consumo_hora += dispositivos[i].consumo;
