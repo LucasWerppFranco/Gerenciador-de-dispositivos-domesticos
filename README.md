@@ -57,15 +57,11 @@ docker run -it --rm meu_programa
 
 
 ---
+# Sprint 1 -
 
-Na **Sprint 3**, o sistema foi evoluído com:
-- Implementação de dois algoritmos de ordenação:
-  - **Bubble Sort**
-  - **Insertion Sort**
-- Comparação entre os algoritmos, registrando:
-  - Tempo de execução (via `clock()`).
-  - Número de comparações realizadas.
-- Exibição de resultados comparativos em tabela.
+# Sprint 2 -
+
+# Sprint 3 - dois algoritmos de ordenação
 
 ## 📊 Resultados Comparativos (exemplo com 6 dispositivos)
 Algoritmo	Tempo (s)	Comparações:
@@ -76,7 +72,7 @@ Algoritmo	Tempo (s)	Comparações:
 
 <img width="453" height="241" alt="20250923_19h07m21s_grim" src="https://github.com/user-attachments/assets/06f7ea29-20d7-4e42-87a5-acd66c11256d" />
 
-> ⚠️ Os valores variam conforme o número de dispositivos cadastrados e a máquina de execução.
+> ⚠️ **Nota Importante:** - Os valores variam conforme o número de dispositivos cadastrados e a máquina de execução.
 
 ## 📈 Análise de Complexidade
 Bubble Sort
