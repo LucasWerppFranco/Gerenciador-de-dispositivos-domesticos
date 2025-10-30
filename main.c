@@ -43,6 +43,7 @@ void esperarPressionarQ();
 void exibirDispositivos(Dispositivo* dispositivos, int quantidade);
 void alterarStatusDispositivo(Dispositivo* dispositivos, int quantidade);
 void cadastrarDispositivos(Dispositivo** dispositivos, int* quantidade);
+void simularCasaInteligente(Dispositivo* dispositivos, int quantidade);
 void salvarDispositivos(Dispositivo* dispositivos, int quantidade);
 int carregarDispositivos(Dispositivo** dispositivos);
 
@@ -61,10 +62,11 @@ int main() {
         "Cadastrar dispositivo",
         "Listar dispositivos",
         "Alterar status de dispositivos",
+        "Simular casa inteligente",
         "Comparar algoritmos",
         "Sair"
     };
-    int total_opcoes = 5;
+    int total_opcoes = 6;
     int selected = 0;
     int running = 1;
 
@@ -103,9 +105,12 @@ int main() {
                     alterarStatusDispositivo(dispositivos, quantidade); // Chamada correta
                     break;
                 case 3:
-                    compararAlgoritmos(dispositivos, quantidade);
+                    simularCasaInteligente(dispositivos, quantidade);
                     break;
                 case 4:
+                    compararAlgoritmos(dispositivos, quantidade);
+                    break;
+                case 5:
                     salvarDispositivos(dispositivos, quantidade);
                     system("clear");
                     print_border_top();
@@ -275,7 +280,6 @@ void alterarStatusDispositivo(Dispositivo* dispositivos, int quantidade) {
         print_border_bottom();
         printf("\n");
 
-        // Exibe os dispositivos com destaque no selecionado
         for (int i = 0; i < quantidade; i++) {
             char prioridadeTexto[10];
             switch (dispositivos[i].prioridade) {
@@ -417,6 +421,165 @@ void cadastrarDispositivos(Dispositivo** dispositivos, int* quantidade) {
     esperarPressionarQ();
 }
 
+void simularCasaInteligente(Dispositivo* dispositivos, int quantidade) {
+    if (quantidade == 0) {
+        system("clear");
+        print_border_top();
+        print_line("Nenhum dispositivo cadastrado!");
+        print_border_bottom();
+        esperarPressionarQ();
+        return;
+    }
+
+    float reserva;
+    system("clear");
+    print_border_top();
+    print_line("Simulacao de Casa Inteligente");
+    print_line("Informe a quantidade de energia disponivel (kWh):");
+    print_border_bottom();
+    printf("> ");
+    scanf("%f", &reserva);
+    limparBufferEntrada();
+
+    int hora = 0;
+    const int HORAS_DIA = 24;
+    int selecionado = 0;
+    const char* opcoes[] = {"Avancar 1 hora", "Encerrar simulacao"};
+    int total_opcoes = 2;
+    int rodando = 1;
+
+    while (rodando && hora <= HORAS_DIA) {
+        system("clear");
+
+        print_border_top();
+        char titulo[80];
+        snprintf(titulo, sizeof(titulo), "Simulacao de Casa Inteligente - Hora %d / %d", hora, HORAS_DIA);
+        print_line(titulo);
+        print_border_bottom();
+
+        printf("\nNome                 | Consumo    | Prioridade | Status    \n");
+        printf("---------------------------------------------------------------\n");
+
+        float consumo_hora = 0.0f;
+
+        // Calcula consumo dos ligados e exibe tabela
+        for (int i = 0; i < quantidade; i++) {
+            if (dispositivos[i].status == 1) {
+                consumo_hora += dispositivos[i].consumo;
+            }
+
+            const char* prioridade_txt = (dispositivos[i].prioridade == 1)
+                                         ? "Alta"
+                                         : (dispositivos[i].prioridade == 2)
+                                               ? "Media"
+                                               : "Baixa";
+
+            const char* status_txt = (dispositivos[i].status == 1)
+                                     ? "\033[32mLigado\033[0m"
+                                     : "\033[31mDesligado\033[0m";
+
+            printf("%-20s | %-10.2f | %-10s | %-10s\n",
+                   dispositivos[i].nome,
+                   dispositivos[i].consumo,
+                   prioridade_txt,
+                   status_txt);
+        }
+
+        printf("\nConsumo desta hora: %.2f kWh\n", consumo_hora);
+        printf("Energia restante: %.2f kWh\n", reserva);
+        printf("Horas simuladas: %d / %d\n", hora, HORAS_DIA);
+
+        // Mostra menu de opções
+        printf("\n");
+        print_border_top();
+        for (int i = 0; i < total_opcoes; i++) {
+            char buffer[100];
+            if (i == selecionado)
+                snprintf(buffer, sizeof(buffer), " < %s >", opcoes[i]);
+            else
+                snprintf(buffer, sizeof(buffer), "   %s   ", opcoes[i]);
+            print_line(buffer);
+        }
+        print_border_bottom();
+
+        // Captura tecla
+        int tecla = capturaTecla();
+        if (tecla == 'w') {
+            selecionado = (selecionado - 1 + total_opcoes) % total_opcoes;
+        } else if (tecla == 's') {
+            selecionado = (selecionado + 1) % total_opcoes;
+        } else if (tecla == '\n') {
+            if (selecionado == 0) {
+                hora++;
+
+                // Subtrai consumo total da reserva
+                reserva -= consumo_hora;
+
+                // Se reserva acabou, desligar tudo
+                if (reserva <= 0) {
+                    for (int i = 0; i < quantidade; i++) {
+                        dispositivos[i].status = 0;
+                    }
+                    reserva = 0;
+                } else {
+                    // Verifica se reserva é suficiente para sustentar as prioridades
+                    float consumo_alta = 0, consumo_media = 0, consumo_baixa = 0;
+                    for (int i = 0; i < quantidade; i++) {
+                        if (dispositivos[i].prioridade == 1)
+                            consumo_alta += dispositivos[i].consumo;
+                        else if (dispositivos[i].prioridade == 2)
+                            consumo_media += dispositivos[i].consumo;
+                        else
+                            consumo_baixa += dispositivos[i].consumo;
+                    }
+
+                    float necessidade_alta = consumo_alta * (HORAS_DIA - hora);
+                    float necessidade_media = (consumo_alta + consumo_media) * (HORAS_DIA - hora);
+
+                    // Se não há energia para todos de prioridade média+alta
+                    if (reserva < necessidade_media) {
+                        for (int i = 0; i < quantidade; i++) {
+                            if (dispositivos[i].prioridade == 3)
+                                dispositivos[i].status = 0; // desliga baixa
+                            else
+                                dispositivos[i].status = 1; // mantém ligados média e alta
+                        }
+                    }
+
+                    // Se não há energia nem para os de prioridade alta
+                    if (reserva < necessidade_alta) {
+                        for (int i = 0; i < quantidade; i++) {
+                            if (dispositivos[i].prioridade >= 2)
+                                dispositivos[i].status = 0; // desliga média e baixa
+                            else
+                                dispositivos[i].status = 1; // mantém só alta
+                        }
+                    }
+                }
+
+                // Espera um instante antes de atualizar
+                struct timespec ts = {0, 300000000}; // 0 segundos, 300ms
+                nanosleep(&ts, NULL);
+
+            } else if (selecionado == 1) {
+                rodando = 0;
+            }
+        }
+
+        // Evita apagar conteúdo superior (menu redesenhado suavemente)
+        printf("\0337");       // salva posição
+        printf("\033[%dB", 2); // move para baixo (espaço do menu)
+        printf("\033[J");      // limpa apenas o menu
+        printf("\0338");       // restaura posição
+    }
+
+    system("clear");
+    print_border_top();
+    print_line("Simulacao encerrada!");
+    print_border_bottom();
+    esperarPressionarQ();
+}
+
 void salvarDispositivos(Dispositivo* dispositivos, int quantidade) {
     FILE* f = fopen(ARQUIVO, "w");
     if (!f) {
@@ -434,7 +597,6 @@ void salvarDispositivos(Dispositivo* dispositivos, int quantidade) {
         print_border_top();
         print_line("Erro ao escrever no arquivo.");
         print_border_bottom();
-        esperarPressionarQ();
         return;
     }
 
@@ -445,7 +607,6 @@ void salvarDispositivos(Dispositivo* dispositivos, int quantidade) {
             print_border_top();
             print_line("Erro ao escrever no arquivo.");
             print_border_bottom();
-            esperarPressionarQ();
             return;
         }
         if (fprintf(f, "%.2f %d %d\n", dispositivos[i].consumo,
@@ -456,7 +617,6 @@ void salvarDispositivos(Dispositivo* dispositivos, int quantidade) {
             print_border_top();
             print_line("Erro ao escrever no arquivo.");
             print_border_bottom();
-            esperarPressionarQ();
             return;
         }
     }
