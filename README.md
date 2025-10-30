@@ -83,7 +83,7 @@ As operações de entrada e saída se mostraram estáveis, com os seguintes dest
 
 ## 💡 Descrição
 
-Na Sprint 2 foi desenvolvida a **simulação de decisão**, que utiliza as informações cadastradas para **avaliar prioridades** e simular o comportamento dos dispositivos em situações específicas (por exemplo, desligamento por sobrecarga ou consumo máximo).
+Na Sprint 2 foi desenvolvida a **simulação de decisão**, que utiliza as informações cadastradas para **avaliar prioridades** e simular o comportamento dos dispositivos em situações específicas (por exemplo, desligamento devido a falta de energia na reserva).
 O foco foi testar a interação entre o cadastro e as futuras operações de ordenação, servindo como uma “prévia” da lógica de comparação entre dispositivos.
 
 A interface textual foi aprimorada com um **menu interativo**, que permite navegar entre as opções:
