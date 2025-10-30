@@ -1,5 +1,36 @@
 # Gerenciador de dispositivos domesticos
 
+```
+             ________________________________________________
+            /                                                \
+           |    _________________________________________     |
+           |   | ╔════════════════════════════════╗      |    |
+           |   | ║    <=== MENU PRINCIPAL ===>    ║      |    |
+           |   | ║                                ║      |    |
+           |   | ║ < Cadastrar dispositivo >      ║      |    |
+           |   | ║    Listar dispositivos         ║      |    |
+           |   | ║    Comparar algoritmos         ║      |    |
+           |   | ║    Sair                        ║      |    |
+           |   | ║                                ║      |    |
+           |   | ║Use as setas ou W/S             ║      |    |
+           |   | ╚════════════════════════════════╝      |    |
+           |   |  /                                      |    |
+           |   |                                         |    |
+           |   |                                         |    |
+           |   |_________________________________________|    |
+           |                                                  |
+            \_________________________________________________/
+                   \___________________________________/
+                ___________________________________________
+             _-'    .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.  --- `-_
+          _-'.-.-. .---.-.-.-.-.-.-.-.-.-.-.-.-.-.-.--.  .-.-.`-_
+       _-'.-.-.-. .---.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-`__`. .-.-.-.`-_
+    _-'.-.-.-.-. .-----.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-----. .-.-.-.-.`-_
+ _-'.-.-.-.-.-. .---.-. .-------------------------. .-.---. .---.-.-.-.`-_
+:-------------------------------------------------------------------------:
+`---._.-------------------------------------------------------------._.---'
+```
+
 > ⚠️ **Nota Importante:** - O programa foi criado no contexto de uma maquina Linux 
 
 Eexistem alguns fatores que impedem a sua compilação em uma maquina Windows. Para contornar isso, Eu desenvolvi uma Dockerfile que compila e roda o código no contexto de uma maquina windos para quem for usar este programa.
@@ -16,6 +47,12 @@ gcc -std=c99 -D_XOPEN_SOURCE=700 main.c -o main
 docker build -t meu_programa .
 docker run -it --rm meu_programa
 ```
+
+---
+
+# Funcionamento Do Projeto
+
+
 
 ---
 
