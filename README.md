@@ -1,5 +1,7 @@
 # Gerenciador de dispositivos domesticos
 
+Este é um programa simples em C de cadastro dinâmico, simulação de decisão e comparação de algoritmos desenvolvido no meu primeiro ano da faculdade de ciências da computação. Esta aplicação foi desenvolvida com o intuito de reforçar e colocar em pratica as habilidades competências técnicas desenvolvidas durante todo o ano na diciplina de **Data Structures and Algorithms**.
+
 ```
              ________________________________________________
             /                                                \
