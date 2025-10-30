@@ -1,14 +1,13 @@
 6
-Geladeira
-38.00 1
-Lampada da Sala
-1.50 2
-Roteador
-1.20 1
 Micro Ondas
-10.00 3
-Lampada Cozinha
-1.00 2
+10.00 3 0
 Chuveiro Eletrico
-1.65 3
-
+1.65 3 0
+Lampada da Sala
+1.50 2 0
+Lampada Cozinha
+1.00 2 0
+Geladeira
+38.00 1 0
+Roteador
+1.20 1 0
