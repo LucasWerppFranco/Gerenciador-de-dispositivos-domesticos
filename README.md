@@ -57,9 +57,51 @@ docker run -it --rm meu_programa
 
 
 ---
-# Sprint 1 - Cadastro dinâmico
 
-# Sprint 2 - Simulação de decisão
+# Sprint 1 – Cadastro Dinâmico
+
+## 💡 Descrição
+
+Nesta sprint foi implementada a **estrutura de dados dinâmica** para o cadastro de dispositivos elétricos.
+Cada dispositivo possui três atributos principais:
+
+* `nome` → identificação textual do aparelho;
+* `consumo` → valor em watts (ou outra unidade definida);
+* `prioridade` → grau de importância do dispositivo.
+
+O programa armazena esses dados em um vetor dinâmico de estruturas (`Dispositivo`), permitindo **crescimento em tempo de execução** conforme o usuário adiciona novos registros.
+Também foram criadas funções de **leitura e gravação em arquivo** (`dispositivos.txt`) para persistir as informações entre execuções.
+
+## 🔍 Resultados
+
+Durante os testes, o sistema permitiu cadastrar, listar e salvar os dispositivos com sucesso.
+As operações de entrada e saída se mostraram estáveis, com os seguintes destaques:
+
+* Cadastro dinâmico e sem limite fixo de dispositivos;
+* Leitura correta de dados armazenados no arquivo;
+* Estrutura simples e extensível para futuras funcionalidades (como ordenação ou filtragem).
+
+# Sprint 2 – Simulação de Decisão
+
+## 💡 Descrição
+
+Na Sprint 2 foi desenvolvida a **simulação de decisão**, que utiliza as informações cadastradas para **avaliar prioridades** e simular o comportamento dos dispositivos em situações específicas (por exemplo, desligamento por sobrecarga ou consumo máximo).
+O foco foi testar a interação entre o cadastro e as futuras operações de ordenação, servindo como uma “prévia” da lógica de comparação entre dispositivos.
+
+A interface textual foi aprimorada com um **menu interativo**, que permite navegar entre as opções:
+
+1. Cadastrar dispositivo
+2. Listar dispositivos
+3. Comparar algoritmos
+4. Sair
+
+Esse menu utiliza captura direta de teclado (sem necessidade de pressionar Enter) e fornece uma experiência fluida dentro do terminal.
+
+## 🔍 Resultados
+
+* Simulação executada corretamente, com feedback visual no terminal;
+* Integração funcional entre cadastro, listagem e simulação;
+* Preparação do ambiente para a introdução de **algoritmos de decisão e ordenação** na sprint seguinte.
 
 # Sprint 3 - Comparação de algoritmos
 
