@@ -462,7 +462,6 @@ void simularCasaInteligente(Dispositivo* dispositivos, int quantidade) {
 
         float consumo_hora = 0.0f;
 
-        // Calcula consumo dos ligados e exibe tabela
         for (int i = 0; i < quantidade; i++) {
             if (dispositivos[i].status == 1) {
                 consumo_hora += dispositivos[i].consumo;
@@ -489,7 +488,6 @@ void simularCasaInteligente(Dispositivo* dispositivos, int quantidade) {
         printf("Energia restante: %.2f kWh\n", reserva);
         printf("Horas simuladas: %d / %d\n", hora, HORAS_DIA);
 
-        // Mostra menu de opções
         printf("\n");
         print_border_top();
         for (int i = 0; i < total_opcoes; i++) {
@@ -502,7 +500,6 @@ void simularCasaInteligente(Dispositivo* dispositivos, int quantidade) {
         }
         print_border_bottom();
 
-        // Captura tecla
         int tecla = capturaTecla();
         if (tecla == 'w') {
             selecionado = (selecionado - 1 + total_opcoes) % total_opcoes;
@@ -512,17 +509,14 @@ void simularCasaInteligente(Dispositivo* dispositivos, int quantidade) {
             if (selecionado == 0) {
                 hora++;
 
-                // Subtrai consumo total da reserva
                 reserva -= consumo_hora;
 
-                // Se reserva acabou, desligar tudo
                 if (reserva <= 0) {
                     for (int i = 0; i < quantidade; i++) {
                         dispositivos[i].status = 0;
                     }
                     reserva = 0;
                 } else {
-                    // Verifica se reserva é suficiente para sustentar as prioridades
                     float consumo_alta = 0, consumo_media = 0, consumo_baixa = 0;
                     for (int i = 0; i < quantidade; i++) {
                         if (dispositivos[i].prioridade == 1)
@@ -536,29 +530,26 @@ void simularCasaInteligente(Dispositivo* dispositivos, int quantidade) {
                     float necessidade_alta = consumo_alta * (HORAS_DIA - hora);
                     float necessidade_media = (consumo_alta + consumo_media) * (HORAS_DIA - hora);
 
-                    // Se não há energia para todos de prioridade média+alta
                     if (reserva < necessidade_media) {
                         for (int i = 0; i < quantidade; i++) {
                             if (dispositivos[i].prioridade == 3)
-                                dispositivos[i].status = 0; // desliga baixa
+                                dispositivos[i].status = 0;
                             else
-                                dispositivos[i].status = 1; // mantém ligados média e alta
+                                dispositivos[i].status = 1;
                         }
                     }
 
-                    // Se não há energia nem para os de prioridade alta
                     if (reserva < necessidade_alta) {
                         for (int i = 0; i < quantidade; i++) {
                             if (dispositivos[i].prioridade >= 2)
-                                dispositivos[i].status = 0; // desliga média e baixa
+                                dispositivos[i].status = 0;
                             else
-                                dispositivos[i].status = 1; // mantém só alta
+                                dispositivos[i].status = 1;
                         }
                     }
                 }
 
-                // Espera um instante antes de atualizar
-                struct timespec ts = {0, 300000000}; // 0 segundos, 300ms
+                struct timespec ts = {0, 300000000};
                 nanosleep(&ts, NULL);
 
             } else if (selecionado == 1) {
@@ -566,11 +557,10 @@ void simularCasaInteligente(Dispositivo* dispositivos, int quantidade) {
             }
         }
 
-        // Evita apagar conteúdo superior (menu redesenhado suavemente)
-        printf("\0337");       // salva posição
-        printf("\033[%dB", 2); // move para baixo (espaço do menu)
-        printf("\033[J");      // limpa apenas o menu
-        printf("\0338");       // restaura posição
+        printf("\0337");
+        printf("\033[%dB", 2);
+        printf("\033[J");
+        printf("\0338");
     }
 
     system("clear");
