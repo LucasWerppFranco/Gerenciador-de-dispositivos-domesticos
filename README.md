@@ -54,9 +54,7 @@ docker run -it --rm meu_programa
 
 # Funcionamento Do Projeto
 
-
-
----
+Através de um menu intuitivo no terminal, é possível cadastrar novos dispositivos, listar os já existentes e realizar comparações entre algoritmos de ordenação (Bubble Sort e Insertion Sort). Esses algoritmos organizam os dispositivos conforme seus atributos, enquanto o sistema mede o tempo de execução e o número de comparações, exibindo os resultados de forma clara e comparativa.
 
 # Sprint 1 – Cadastro Dinâmico
 
@@ -104,6 +102,10 @@ Esse menu utiliza captura direta de teclado (sem necessidade de pressionar Enter
 * Preparação do ambiente para a introdução de **algoritmos de decisão e ordenação** na sprint seguinte.
 
 # Sprint 3 - Comparação de algoritmos
+
+## 💡 Descrição
+
+Na Sprint 3 foi implementado o módulo de comparação de algoritmos de ordenação, com foco em avaliar o desempenho de diferentes métodos na organização dos dispositivos cadastrados.
 
 ## 📊 Resultados Comparativos (exemplo com 6 dispositivos)
 Algoritmo	Tempo (s)	Comparações:
